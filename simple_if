@@ -1,0 +1,24 @@
+println Enter x
+read
+store x
+println Enter y
+read
+store y
+println Enter z
+read 
+store z
+push x
+push y
+gtr
+push x
+push z
+gtr
+AND
+testfgoto 22
+openscope
+println Inside if
+push 1
+testtgoto 23
+closescope
+println Not Inside if
+
