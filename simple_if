@@ -17,8 +17,8 @@ AND
 testfgoto 22
 openscope
 println Inside if
+closescope
 push 1
 testtgoto 23
-closescope
 println Not Inside if
 
