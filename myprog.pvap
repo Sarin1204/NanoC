@@ -1,0 +1,12 @@
+define func(int a, bool b) returns bool
+{
+int a;
+a = b + 1;
+loop (1 < 2)
+{
+a = 3;
+}
+
+a =  func(1, 2+3);
+return a;
+}
