@@ -16,8 +16,8 @@ public static void main(String[] args) throws Exception {
 	System.out.println(tree.toStringTree(parser)); // print LISP-style tree
 	
 	//walk the parse tree to convert from high to low level bytecode
-	//ParseTreeWalker walker = new ParseTreeWalker();
-	//walker.walk(new HightoLow(), tree);
+	ParseTreeWalker walker = new ParseTreeWalker();
+	walker.walk(new HightoLow(), tree);
 	
 	}
 }
