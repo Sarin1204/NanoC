@@ -5,4 +5,4 @@ PUSH 2
 STORE aVar
 ENDSCOPE
 FUNCEND myfunc
-
+EOF

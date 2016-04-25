@@ -9,4 +9,4 @@ STORE theReturnVariable
 RET theReturnVariable
 ENDSCOPE
 FUNCEND myfunc
-
+EOF

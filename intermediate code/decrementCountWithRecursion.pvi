@@ -4,9 +4,10 @@ DECLI count
 PUSH count
 PUSH 2
 EQUAL
-TESTFGOTO 13
+TESTFGOTO 14
 OPENSCOPE
 PUSH 0
+DECLI theReturnVariable
 STORE theReturnVariable
 RET theReturnVariable
 ENDSCOPE
@@ -33,4 +34,4 @@ CALL swap count
 STORE a
 ENDSCOPE
 FUNCEND start
-
+EOF

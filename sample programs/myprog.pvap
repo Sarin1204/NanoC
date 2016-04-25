@@ -1,11 +1,12 @@
 int result;
 
-define func(int a, int b) returns bool
+define func(int a, int b) returns int
 {
 int temp;
 temp = a + b + 1;
 loop (1 < 2)
 {
+bool tempssss;
 a = 3;
 }
 

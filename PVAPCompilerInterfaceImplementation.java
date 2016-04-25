@@ -23,8 +23,8 @@ import antlr.pvapCompilerParser.IfStatementContext;
 import antlr.pvapCompilerParser.LoopEnterStatementContext;
 import antlr.pvapCompilerParser.LoopStatementContext;
 import antlr.pvapCompilerParser.LoopbreakstatementContext;
-import antlr.pvapCompilerParser.MainFunctionBodyContext;
-import antlr.pvapCompilerParser.MainFunctionContext;
+//import antlr.pvapCompilerParser.MainFunctionBodyContext;
+//import antlr.pvapCompilerParser.MainFunctionContext;
 import antlr.pvapCompilerParser.NegationContext;
 import antlr.pvapCompilerParser.ParametersContext;
 import antlr.pvapCompilerParser.ProgramContext;
@@ -36,6 +36,7 @@ import antlr.pvapCompilerParser.StatementContext;
 import antlr.pvapCompilerParser.TermContext;
 import antlr.pvapCompilerParser.UnaryContext;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener{
@@ -296,7 +297,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 					if(fbc != null)
 					{
 						fc = (FunctionsContext) fbc.parent;
-						System.out.println("exitReturnstatement      "  + fc.d.getText());
+						//System.out.println("exitReturnstatement      "  + fc.d.getText());
 
 						if(fc.d != null)
 						{
@@ -311,7 +312,6 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 									lineNumber = lineNumber + 1;
 									sb.add("RET " + "theReturnVariable");
 								}
-
 							}
 							else if(fc.d.getText().contentEquals("bool"))
 							{
@@ -331,8 +331,6 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 				}
 			}
 		}
-
-
 	}
 
 	@Override
@@ -644,13 +642,28 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		//System.out.println("enterProgram");
 	}
 
+	private void writeIntermediateCodeToFile()
+	{
+		try{
+		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/swap.pvi", "UTF-8");
+		for (int i = 0; i< sb.size(); i++)
+			writer.println(sb.get(i));
+
+		writer.close();
+		}catch(Exception e)
+		{
+			System.out.println("Cannot write to the file \n\n\n\n" + e.toString());
+		}
+	}
+	
 	@Override
 	public void exitProgram(ProgramContext ctx) {
 		// TODO Auto-generated method stub
 		//System.out.println("exitProgram");
 //		System.out.println(sb.toString());
-		for (int i = 0; i< sb.size(); i++)
-			System.out.println(sb.get(i));
+		lineNumber = lineNumber + 1;
+		sb.add("EOF");
+		writeIntermediateCodeToFile();
 		//System.out.println("total intermediate codes generated     " + lineNumber);
 	}
 
@@ -779,7 +792,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		
 	}
 
-	@Override
+	/*@Override
 	public void enterMainFunction(MainFunctionContext ctx) {
 		// TODO Auto-generated method stub
 		lineNumber = lineNumber + 1;
@@ -836,5 +849,5 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	public void exitMainFunctionBody(MainFunctionBodyContext ctx) {
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 }
