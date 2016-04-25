@@ -14,8 +14,7 @@ tokens
 	PARAMS
 }
 program:
-(declarations)*
-(assignmentstatement | functions)*
+(declarations | assignmentstatement | functions)*
 //mainFunction?
 ;
 
@@ -58,7 +57,7 @@ returnstatement: 'return' (e=expression | f=functionCall)? ENDOFSTATEMENT;
 loopbreakstatement: 'terminate' ENDOFSTATEMENT;
 assignmentstatement:
 	lhs=identifier op='=' rhs=expression ENDOFSTATEMENT
-	| lhs=identifier '=' f=functionCall ENDOFSTATEMENT
+	| (lhs=identifier '=')? f=functionCall ENDOFSTATEMENT
 ;
 
 functionCall:

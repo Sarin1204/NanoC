@@ -225,8 +225,10 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	@Override
 	public void exitAssignmentstatement(AssignmentstatementContext ctx) {
 		// TODO Auto-generated method stub
-		lineNumber = lineNumber + 1;
-		sb.add("STORE" + " " + ctx.lhs.getText());
+		if(ctx.lhs != null){
+			lineNumber = lineNumber + 1;
+			sb.add("STORE" + " " + ctx.lhs.getText());
+		}
 		//System.out.println("exitAssignmentstatement");
 	}
 
@@ -645,7 +647,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	private void writeIntermediateCodeToFile()
 	{
 		try{
-		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/swap.pvi", "UTF-8");
+		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog16.pvi", "UTF-8");
 		for (int i = 0; i< sb.size(); i++)
 			writer.println(sb.get(i));
 

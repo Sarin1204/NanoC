@@ -34,4 +34,5 @@ CALL swap count
 STORE a
 ENDSCOPE
 FUNCEND start
+CALL start 
 EOF
