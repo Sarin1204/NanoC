@@ -1,6 +1,6 @@
 import pdb
 
-line_offset = []
+line_offset = [0]
 func_dict = {}
 
 def create_offsets(input_file):

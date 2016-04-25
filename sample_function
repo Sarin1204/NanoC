@@ -8,17 +8,19 @@ store value
 push exp
 push 0
 gtr
-testfgoto 21
+testfgoto 24
 openscope
 push value
 push base
-mul value
+mul
+store value
 push exp
 push 1
-sub exp
+sub
+store exp
 closescope
 push True
-testtgoto 7
+testtgoto 8
 RET value
 println 'Enter' 'base'
 read
@@ -28,6 +30,6 @@ println 'Enter' 'exponent'
 read
 declI exp
 store exp
-invoke power base exp
+call power base exp
 store ans
 println 'The' 'answer' 'is' ans

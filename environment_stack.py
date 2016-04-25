@@ -18,7 +18,7 @@ def destroy_environment():
     environment_stack.pop()
     
 def invoke_function_environment(calling_scope,line,bytecode_file_pointer,curr_line_number):
-    #pdb.set_trace()
+    pdb.set_trace()
     instr = Instruction(line)
     func_environment = Environment(False,curr_line_number[0]+1)
     curr_line_number[0] = initialize_function_arguments(calling_scope,func_environment,instr,bytecode_file_pointer)
@@ -52,15 +52,13 @@ def initialize_function_arguments(calling_environment,func_environment,func_inst
                 func_environment.declare_variable(instr.arg[0],'bool')
             elif instr.command == 'declI':
                 func_environment.declare_variable(instr.arg[0],'int')
-            func_environment.push_stack(param)
-            func_environment.store_variable(instr.arg[0])
+            func_environment.store_variable(instr.arg[0],param)
         elif (calling_environment.retrieve_symbol_type(param) == 'bool' and instr.command == 'declB') or (calling_environment.retrieve_symbol_type(param) == 'int' and instr.command == 'declI'):           
             if instr.command == 'declB':
                 func_environment.declare_variable(instr.arg[0],'bool')
             elif instr.command == 'declI':
                 func_environment.declare_variable(instr.arg[0],'int')
-            func_environment.push_stack(calling_environment.retrieve_symbol(param))
-            func_environment.store_variable(instr.arg[0])
+            func_environment.store_variable(instr.arg[0],calling_environment.retrieve_symbol(param))
         else:
             raise FunctionParamException({
                         'symbol' : func_instr.arg[0]

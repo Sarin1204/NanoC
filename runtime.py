@@ -31,7 +31,7 @@ def read_file(bytecode_file_pointer,scope):
         #pdb.set_trace()
         curr_line_number[0] += 1
         line = line.replace("\n","")
-        if 'invoke' in line:
+        if 'call' in line:
             #pdb.set_trace()
             invoke_function_environment(scope,line,bytecode_file_pointer,curr_line_number)
             return True
