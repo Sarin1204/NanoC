@@ -29,17 +29,21 @@ cd=compoundDataType identifier '=' SIMPLEDATATYPE'[' digit ']' ENDOFSTATEMENT
 functions:
 'define' i=identifier '(' (p=parameters)?')' ('returns' d=datatypes)?
 '{'
-declarations*
-sequenceofstatements
+functionBody
 '}'
 ;
 
-parameters: datatypes identifier (',' datatypes identifier)*;
+functionBody:
+declarations*
+sequenceofstatements
+;
+
+parameters: datatypes IDENT (',' datatypes IDENT)*;
 sequenceofstatements: (statement)*;
 statement: (simplestatement | compoundstatement);
 simplestatement : returnstatement | assignmentstatement;
 
-returnstatement: 'return' (e=expression | f=functionCall) ENDOFSTATEMENT;
+returnstatement: 'return' (e=expression | f=functionCall)? ENDOFSTATEMENT;
 loopbreakstatement: 'terminate' ENDOFSTATEMENT;
 assignmentstatement:
 	lhs=identifier op='=' rhs=expression ENDOFSTATEMENT

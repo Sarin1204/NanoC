@@ -14,6 +14,7 @@ import antlr.pvapCompilerParser.DatatypesContext;
 import antlr.pvapCompilerParser.DeclarationsContext;
 import antlr.pvapCompilerParser.DigitContext;
 import antlr.pvapCompilerParser.ExpressionContext;
+import antlr.pvapCompilerParser.FunctionBodyContext;
 import antlr.pvapCompilerParser.FunctionCallContext;
 import antlr.pvapCompilerParser.FunctionsContext;
 import antlr.pvapCompilerParser.IdentifierContext;
@@ -235,24 +236,43 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	public void exitReturnstatement(ReturnstatementContext ctx) {
 		// TODO Auto-generated method stub
 		//System.out.println("exitReturnstatement");
+		SimplestatementContext ssc = null;
+		StatementContext sc = null;
+		SequenceofstatementsContext sosc = null;
+		FunctionBodyContext fbc = null;
+		FunctionsContext fc = null;
 		
-		SimplestatementContext ssc = (SimplestatementContext) ctx.parent;
-		StatementContext sc = (StatementContext) ssc.parent;
-		SequenceofstatementsContext sosc = (SequenceofstatementsContext) sc.parent;
-		FunctionsContext fc = (FunctionsContext) sosc.parent;
-		if(fc.d != null)
-		{
-			if(fc.d.getText().contentEquals("int"))
+		ssc = (SimplestatementContext) ctx.parent;
+		if(ssc != null ){
+			sc = (StatementContext) ssc.parent;
+			if(sc != null)
 			{
-				lineNumber = lineNumber + 1;
-				sb.add("DECLI " + "theReturnVariable");
-			}
-			else if(fc.d.getText().contentEquals("bool"))
-			{
-				lineNumber = lineNumber + 1;
-				sb.add("DECLB " + "theReturnVariable");
+				sosc = (SequenceofstatementsContext) sc.parent;
+				if(sosc != null)
+				{
+					fbc = (FunctionBodyContext) sosc.parent;
+					if(fbc != null)
+					{
+						fc = (FunctionsContext) fbc.parent;
+						
+						if(fc.d != null)
+						{
+							if(fc.d.getText().contentEquals("int"))
+							{
+								lineNumber = lineNumber + 1;
+								sb.add("DECLI " + "theReturnVariable");
+							}
+							else if(fc.d.getText().contentEquals("bool"))
+							{
+								lineNumber = lineNumber + 1;
+								sb.add("DECLB " + "theReturnVariable");
+							}
+						}
+					}
+				}
 			}
 		}
+
 
 		if((ctx.f !=null) || (ctx.e!=null))
 		{
@@ -658,5 +678,48 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		// TODO Auto-generated method stub
 		lineNumber = lineNumber + 1;
 		sb.add("TESTFGOTO LOOPEND");
+	}
+
+	@Override
+	public void enterFunctionBody(FunctionBodyContext ctx) {
+		// TODO Auto-generated method stub
+		FunctionsContext fc = null;
+		fc = (FunctionsContext) ctx.parent;
+		
+		if(fc.p != null)
+		{
+			ParametersContext pc = fc.p;
+			for (int j =0; j < pc.getChildCount();)
+			{
+				if(pc.getChild(j).getText().contentEquals(","))
+					j = j + 1;
+
+				else
+				{
+					String dataType = pc.getChild(j).getText();
+					String variableName = pc.getChild((j+1)).getText();
+					
+					if(dataType.contentEquals("int"))
+					{
+						lineNumber = lineNumber + 1;
+						sb.add("DECLI " + variableName);
+					}
+					else if(dataType.contentEquals("bool"))
+					{
+						lineNumber = lineNumber + 1;
+						sb.add("DECLB " + variableName);
+					}
+					j = j + 2;
+				}
+			}
+		}
+
+		
+	}
+
+	@Override
+	public void exitFunctionBody(FunctionBodyContext ctx) {
+		// TODO Auto-generated method stub
+		
 	}
 }
