@@ -1,0 +1,13 @@
+define swap(int arg1, bool arg2)
+{
+int temp = 0;
+temp = arg1;
+arg1 = arg2;
+arg2 = temp;
+}
+
+define start()
+{
+int a = 0;
+a = swap(arg1 = 1; arg2 = 2;);
+}

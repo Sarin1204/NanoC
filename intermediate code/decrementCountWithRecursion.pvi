@@ -1,0 +1,36 @@
+FUNCSTART swap
+OPENSCOPE
+DECLI count
+PUSH count
+PUSH 2
+EQUAL
+TESTFGOTO 13
+OPENSCOPE
+PUSH 0
+STORE theReturnVariable
+RET theReturnVariable
+ENDSCOPE
+PUSH count
+PUSH 1
+SUB
+STORE count
+PUSH count
+STORE count
+CALL swap count 
+DECLI theReturnVariable
+STORE theReturnVariable
+RET theReturnVariable
+ENDSCOPE
+FUNCEND swap
+FUNCSTART start
+OPENSCOPE
+DECLI a
+PUSH 0
+STORE a
+PUSH 3
+STORE count
+CALL swap count 
+STORE a
+ENDSCOPE
+FUNCEND start
+

@@ -16,8 +16,20 @@ tokens
 program:
 (declarations)*
 assignmentstatement*
-|
 functions*
+mainFunction?
+;
+
+mainFunction:
+'define' i='start' '(' (p=parameters)?')' ('returns' d=datatypes)?
+'{'
+mainFunctionBody
+'}'
+;
+
+mainFunctionBody:
+declarations*
+sequenceofstatements
 ;
 
 declarations:

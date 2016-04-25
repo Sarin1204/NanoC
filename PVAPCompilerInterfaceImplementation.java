@@ -1,6 +1,7 @@
 package antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -22,6 +23,8 @@ import antlr.pvapCompilerParser.IfStatementContext;
 import antlr.pvapCompilerParser.LoopEnterStatementContext;
 import antlr.pvapCompilerParser.LoopStatementContext;
 import antlr.pvapCompilerParser.LoopbreakstatementContext;
+import antlr.pvapCompilerParser.MainFunctionBodyContext;
+import antlr.pvapCompilerParser.MainFunctionContext;
 import antlr.pvapCompilerParser.NegationContext;
 import antlr.pvapCompilerParser.ParametersContext;
 import antlr.pvapCompilerParser.ProgramContext;
@@ -232,6 +235,26 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		//System.out.println("enterReturnstatement");
 	}
 
+	private FunctionBodyContext getFunctionBodyContext( RuleContext context)
+	{
+		FunctionBodyContext fbc = null;
+		try{
+			fbc = (FunctionBodyContext) context.parent;
+		}
+		catch (ClassCastException cce)
+		{
+			return getFunctionBodyContext(context.parent);
+		}
+		catch(Exception e)
+		{
+			System.out.println("couldnt cast at all");
+			fbc = null;
+		}
+		
+		return fbc;
+		
+	}
+	
 	@Override
 	public void exitReturnstatement(ReturnstatementContext ctx) {
 		// TODO Auto-generated method stub
@@ -250,22 +273,58 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 				sosc = (SequenceofstatementsContext) sc.parent;
 				if(sosc != null)
 				{
-					fbc = (FunctionBodyContext) sosc.parent;
+					fbc = getFunctionBodyContext(sosc);
+
+					/*try
+					{
+						//check if we are returning from a function
+						fbc = (FunctionBodyContext) sosc.parent;
+					}
+					catch(ClassCastException e)
+					{
+						// the return was inside another block.
+						try
+						{
+							fbc = (FunctionBodyContext) sosc.parent.parent;
+						}
+						catch(Exception excp)
+						{
+							fbc = null;
+						}
+					}*/
+					
 					if(fbc != null)
 					{
 						fc = (FunctionsContext) fbc.parent;
-						
+						System.out.println("exitReturnstatement      "  + fc.d.getText());
+
 						if(fc.d != null)
 						{
 							if(fc.d.getText().contentEquals("int"))
 							{
 								lineNumber = lineNumber + 1;
 								sb.add("DECLI " + "theReturnVariable");
+								if((ctx.f !=null) || (ctx.e!=null))
+								{
+									lineNumber = lineNumber + 1;
+									sb.add("STORE " + "theReturnVariable");
+									lineNumber = lineNumber + 1;
+									sb.add("RET " + "theReturnVariable");
+								}
+
 							}
 							else if(fc.d.getText().contentEquals("bool"))
 							{
 								lineNumber = lineNumber + 1;
 								sb.add("DECLB " + "theReturnVariable");
+								if((ctx.f !=null) || (ctx.e!=null))
+								{
+									lineNumber = lineNumber + 1;
+									sb.add("STORE " + "theReturnVariable");
+									lineNumber = lineNumber + 1;
+									sb.add("RET " + "theReturnVariable");
+								}
+
 							}
 						}
 					}
@@ -274,13 +333,6 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		}
 
 
-		if((ctx.f !=null) || (ctx.e!=null))
-		{
-			lineNumber = lineNumber + 1;
-			sb.add("STORE " + "theReturnVariable");
-			lineNumber = lineNumber + 1;
-			sb.add("RET " + "theReturnVariable");
-		}
 	}
 
 	@Override
@@ -684,7 +736,11 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	public void enterFunctionBody(FunctionBodyContext ctx) {
 		// TODO Auto-generated method stub
 		FunctionsContext fc = null;
-		fc = (FunctionsContext) ctx.parent;
+		
+		if(ctx.parent != null)
+		{
+			fc = (FunctionsContext) ctx.parent;
+		}
 		
 		if(fc.p != null)
 		{
@@ -719,6 +775,65 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 
 	@Override
 	public void exitFunctionBody(FunctionBodyContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enterMainFunction(MainFunctionContext ctx) {
+		// TODO Auto-generated method stub
+		lineNumber = lineNumber + 1;
+		sb.add("FUNCSTART " + ctx.i.getText());
+	}
+
+	@Override
+	public void exitMainFunction(MainFunctionContext ctx) {
+		// TODO Auto-generated method stub
+		lineNumber = lineNumber + 1;
+		sb.add("FUNCEND " + ctx.i.getText());
+	}
+
+	@Override
+	public void enterMainFunctionBody(MainFunctionBodyContext ctx) {
+		// TODO Auto-generated method stub
+		MainFunctionContext fc = null;
+		
+		if(ctx.parent != null)
+		{
+			fc = (MainFunctionContext) ctx.parent;
+		}
+		
+		if(fc.p != null)
+		{
+			ParametersContext pc = fc.p;
+			for (int j =0; j < pc.getChildCount();)
+			{
+				if(pc.getChild(j).getText().contentEquals(","))
+					j = j + 1;
+
+				else
+				{
+					String dataType = pc.getChild(j).getText();
+					String variableName = pc.getChild((j+1)).getText();
+					
+					if(dataType.contentEquals("int"))
+					{
+						lineNumber = lineNumber + 1;
+						sb.add("DECLI " + variableName);
+					}
+					else if(dataType.contentEquals("bool"))
+					{
+						lineNumber = lineNumber + 1;
+						sb.add("DECLB " + variableName);
+					}
+					j = j + 2;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void exitMainFunctionBody(MainFunctionBodyContext ctx) {
 		// TODO Auto-generated method stub
 		
 	}
