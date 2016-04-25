@@ -1,10 +1,13 @@
-println Enter x
+println 'Enter' 'x'
+declI x
 read
 store x
-println Enter y
+println 'Enter' 'y'
+declI y
 read
 store y
-println Enter z
+println 'Enter' 'z'
+declI z
 read 
 store z
 push x
@@ -14,11 +17,11 @@ push x
 push z
 gtr
 AND
-testfgoto 22
+testfgoto 26
 openscope
-println Inside if
+println 'Inside' 'if'
 closescope
-push 1
-testtgoto 23
-println Not Inside if
+push True
+testtgoto 27
+println Not 'Inside' 'if'
 
