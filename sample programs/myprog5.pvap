@@ -1,0 +1,4 @@
+define myfunc()
+{
+int aVar = 2;
+}

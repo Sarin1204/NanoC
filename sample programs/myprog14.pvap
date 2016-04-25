@@ -1,0 +1,19 @@
+define myfunc()
+{
+int var = 0;
+if(2 < 3) then
+{
+if (1 < 2) then
+{
+var = 1;
+}
+otherwise
+{
+var = 2;
+}
+}
+otherwise
+{
+var = 3;
+}
+}

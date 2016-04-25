@@ -1,0 +1,12 @@
+FUNCSTART myfunc
+OPENSCOPE
+DECLI var
+PUSH 0
+STORE var
+PUSH var
+DECLI theReturnVariable
+STORE theReturnVariable
+RET theReturnVariable
+ENDSCOPE
+FUNCEND myfunc
+

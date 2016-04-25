@@ -1,0 +1,17 @@
+define myfunc()
+{
+int var;
+if(2>1) then
+{
+var = 1 + 3;
+}
+otherwise if ( 1 > 2) then
+{
+var = 3 + 1;
+}
+otherwise
+{
+var = 0;
+}
+
+}

@@ -1,0 +1,5 @@
+define myfunc(int arg1, bool arg2, int arg3) returns int
+{
+int var = 0;
+return var;
+}

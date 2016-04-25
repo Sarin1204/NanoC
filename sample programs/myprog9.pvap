@@ -1,0 +1,8 @@
+define myfunc()
+{
+int var = 0;
+loop ( var < 3 )
+{
+var = var + 1;
+}
+}
