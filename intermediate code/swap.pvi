@@ -26,4 +26,4 @@ CALL swap arg1 arg2
 STORE a
 ENDSCOPE
 FUNCEND start
-
+EOF

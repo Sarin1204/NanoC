@@ -13,8 +13,9 @@ STORE temp
 PUSH 1
 PUSH 2
 LESS
-TESTFGOTO 23
+TESTFGOTO 24
 OPENSCOPE
+DECLB tempssss
 PUSH 3
 STORE a
 ENDSCOPE
@@ -29,7 +30,7 @@ STORE b
 CALL func a b 
 STORE a
 PUSH a
-DECLB theReturnVariable
+DECLI theReturnVariable
 STORE theReturnVariable
 RET theReturnVariable
 ENDSCOPE

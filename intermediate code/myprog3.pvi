@@ -1,4 +1,4 @@
 DECLI a
 PUSH 1
 STORE a
-
+EOF

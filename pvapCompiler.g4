@@ -14,23 +14,21 @@ tokens
 	PARAMS
 }
 program:
-(declarations)*
-assignmentstatement*
-functions*
-mainFunction?
+(declarations | assignmentstatement | functions)*
+//mainFunction?
 ;
 
-mainFunction:
-'define' i='start' '(' (p=parameters)?')' ('returns' d=datatypes)?
-'{'
-mainFunctionBody
-'}'
-;
+//mainFunction:
+//'define' i='start' '(' (p=parameters)?')' ('returns' d=datatypes)?
+//'{'
+//mainFunctionBody
+//'}'
+//;
 
-mainFunctionBody:
-declarations*
-sequenceofstatements
-;
+//mainFunctionBody:
+//declarations*
+//(assignmentstatement | sequenceofstatements)
+//;
 
 declarations:
 sd=SIMPLEDATATYPE i=IDENT (op='=' expression )? ENDOFSTATEMENT
@@ -59,7 +57,7 @@ returnstatement: 'return' (e=expression | f=functionCall)? ENDOFSTATEMENT;
 loopbreakstatement: 'terminate' ENDOFSTATEMENT;
 assignmentstatement:
 	lhs=identifier op='=' rhs=expression ENDOFSTATEMENT
-	| lhs=identifier '=' f=functionCall ENDOFSTATEMENT
+	| (lhs=identifier '=')? f=functionCall ENDOFSTATEMENT
 ;
 
 functionCall:
@@ -113,16 +111,19 @@ compoundstatement:
 ifStatement:
 	'if' expression 'then'
 	'{'
+		(declarations)*
 		sequenceofstatements
 	'}'
 	('otherwise if' expression 'then'
 	'{'
+		(declarations)*
 		sequenceofstatements
 	'}'
 	)*
 	('otherwise'
 	'{'
-	sequenceofstatements
+		(declarations)*
+		sequenceofstatements
 	'}'
 	)?
 ;
@@ -134,6 +135,7 @@ loopEnterStatement:
 loopStatement:
 	loopEnterStatement
 	'{'
+		(declarations)*
 		sequenceofstatements
 		(loopbreakstatement)?
 	'}'
