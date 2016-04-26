@@ -1,3 +1,3 @@
-Array stck = int[10];
-int s;
-
+Stack stck = int[10];
+push stck, 10;
+pop stck;

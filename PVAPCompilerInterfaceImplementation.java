@@ -991,8 +991,16 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			String type = (String) var.get(0);
 			if(type.equalsIgnoreCase("stack"))
 			{
-				lineNumber = lineNumber + 1;
-				sb.add("STORE " + ctx.i.getText() + "@LAST");
+				if(ctx.sop.getText().equalsIgnoreCase("push"))
+				{
+					lineNumber = lineNumber + 1;
+					sb.add("STORE " + ctx.i.getText() + "@LAST");
+				}
+				else if(ctx.sop.getText().equalsIgnoreCase("pop"))
+				{
+					lineNumber = lineNumber + 1;
+					sb.add("DEL " + ctx.i.getText() + "@LAST");
+				}
 			}
 			else
 			{

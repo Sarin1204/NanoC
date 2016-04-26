@@ -1,3 +1,5 @@
 DECLI stck 10
-DECLI s
+PUSH 10
+STORE stck@LAST
+DEL stck@LAST
 EOF

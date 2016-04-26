@@ -48,7 +48,7 @@ assignmentstatement:
 ;
 
 stackStatement:
-	sop=STACKOPERATIONS i=IDENT ',' expression ENDOFSTATEMENT
+	sop=STACKOPERATIONS i=IDENT (',' expression)? ENDOFSTATEMENT
 ;
 
 arrayType:
@@ -110,6 +110,7 @@ compoundstatement:
 ifStatementBody:
 		(declarations)*
 		sequenceofstatements
+		(loopbreakstatement)?
 ;
 
 ifStatement:

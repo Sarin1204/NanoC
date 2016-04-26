@@ -1,0 +1,20 @@
+define myfunc()
+{
+int var = 1;
+if(2>1) then
+{
+loop(var)
+{
+if ( var == 3) then
+{
+	terminate;
+}
+var = 3;
+}
+}
+otherwise if(3 > 2) then
+{
+}
+var = 2;
+print "variable is ", var, var2, var3
+}
