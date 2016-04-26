@@ -483,6 +483,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			FunctionCallContext fcc = (FunctionCallContext) ctx.parent;
 			//for (int i = 1, j =0; i <= apc.getChildCount();i = i + 2, j += 1)
 			ArrayList<Object> funcDetails = hmap.get(fcc.i.getText());
+
 			@SuppressWarnings("unchecked")
 			HashMap<String, String> args = (HashMap<String, String>) funcDetails.get(argsList);
 			
@@ -569,12 +570,11 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		lineNumber = lineNumber + 1;
 		sb.add("FUNCSTART " + ctx.i.getText());
 
-		HashMap<String, String> args = new HashMap<String, String>();
-		
-		if(ctx.d != null)
-		{
+		HashMap<String, String> args = null;
+
 			if(ctx.p != null)
 			{
+				args = new HashMap<String, String>();
 				for (int j =0; j < ctx.p.getChildCount();)
 				{
 					if(ctx.p.getChild(j).getText().contentEquals(","))
@@ -597,19 +597,24 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 						j = j + 2;
 					}
 				}
-			}
 			
-			ArrayList<Object> v = new ArrayList<Object>(3);
-			v.add(typeOfParam, "function");
-			v.add(returnType, ctx.d.getText());
-			v.add(argsList, args);
-			
-			hmap.put(ctx.i.getText(), v);
 		}
 		else
 		{
-			hmap.put(ctx.i.getText(), null);
+			//v.add(argsList, null);
+			args = null;
 		}
+		
+		ArrayList<Object> v = new ArrayList<Object>();
+		v.add("function");
+		if(ctx.d == null)
+			v.add("null");
+		else
+			v.add(ctx.d.getText());
+
+		v.add(argsList, args);
+		hmap.put(ctx.i.getText(), v);
+
 	}
 
 	@Override
@@ -814,7 +819,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	private void writeIntermediateCodeToFile()
 	{
 		try{
-		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog7.pvi", "UTF-8");
+		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog17.pvi", "UTF-8");
 		for (int i = 0; i< sb.size(); i++)
 			writer.println(sb.get(i));
 

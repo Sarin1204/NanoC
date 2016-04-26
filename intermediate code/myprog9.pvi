@@ -16,8 +16,6 @@ STORE var
 ENDSCOPE
 PUSH 1
 TESTTGOTO 6
-PRINTLN 'var%==%' var
 ENDSCOPE
 FUNCEND myfunc
-CALL myfunc
 EOF

@@ -1,26 +1,28 @@
 FUNCSTART swap
 OPENSCOPE
-DECLB count
-DECLB arg2
+DECLI count
+DECLI arg2
 PUSH count
 PUSH 2
 EQUAL
-TESTFGOTO 15
+TESTFGOTO 17
 OPENSCOPE
 PUSH 0
 DECLI theReturnVariable
 STORE theReturnVariable
 RET theReturnVariable
+PUSH 1
+TESTTGOTO 16
 ENDSCOPE
 PUSH count
 PUSH 1
 SUB
 STORE count
-DECLB count
-DECLB arg2
+DECLI count
+DECLI arg2
 PUSH count
 STORE count
-PUSH erer
+PUSH 22
 STORE arg2
 CALL swap count arg2 
 DECLI theReturnVariable
@@ -33,11 +35,11 @@ OPENSCOPE
 DECLI a
 PUSH 0
 STORE a
-DECLB count
-DECLB arg2
-PUSH 3
+DECLI count
+DECLI arg2
+PUSH 0
 STORE count
-PUSH erer
+PUSH 1
 STORE arg2
 CALL swap count arg2 
 STORE a

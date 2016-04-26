@@ -46,6 +46,7 @@ assignmentstatement:
 	(lhs=identifier | lhsarray=arrayType) op='=' rhs=expression ENDOFSTATEMENT
 	| (lhs=identifier '=')? f=functionCall ENDOFSTATEMENT
 ;
+
 stackStatement:
 	sop=STACKOPERATIONS i=IDENT ',' expression ENDOFSTATEMENT
 ;
@@ -70,9 +71,10 @@ actualParameters:
 	assignmentstatement (assignmentstatement)*
 ;
 
-term: i=IDENT 
+term: BOOLEAN_VALUES
 	| '(' expression ')'
 	| d=DIGIT
+	| i=IDENT
 	| arrayName=IDENT '[' index=DIGIT ']'
 ;
 
@@ -97,11 +99,7 @@ relation:
 ;
 
 expression:
-
-
-lhs=relation (op=('&&' | '||') rhs=relation)
-
-*
+lhs=relation (op=('&&' | '||') rhs=relation)*
 ;
 
 compoundstatement:
@@ -150,7 +148,10 @@ COMPOUNDDATATYPE: ('Array' | 'Stack');
 STACKOPERATIONS: ('push' | 'pop');
 identifier: IDENT;
 ENDOFSTATEMENT: ';' ;
-IDENT: ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '0'..'9')*;
+IDENT: ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '0'..'9')*
+;
+
 digit: DIGIT;
 DIGIT :('0'..'9')+;
+BOOLEAN_VALUES: ('false' | 'true');
 WS: ('\n' | '\r' | ' ' | '\t' | '\f' ) -> skip;
