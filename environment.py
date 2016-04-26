@@ -57,9 +57,6 @@ class Environment:
         
     def retrieve_symbol(self,key):
         try:
-            if key not in self.symbol_table:
-                return 'Key not found'
-            else:
                 return self.symbol_table[key].value
         except Exception,e:
             traceback.print_exc()

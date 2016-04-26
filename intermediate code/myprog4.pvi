@@ -7,4 +7,5 @@ MUL
 PUSH 4
 DIV
 STORE a
+PRINTLN 'a==%' a
 EOF
