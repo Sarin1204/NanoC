@@ -1,0 +1,4 @@
+DECLI arr 10
+PUSH 22
+STORE arr@10
+EOF

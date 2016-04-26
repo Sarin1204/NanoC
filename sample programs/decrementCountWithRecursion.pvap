@@ -1,4 +1,4 @@
-define swap(int count) returns int
+define swap(bool count, bool arg2) returns int
 {
 
 if(count == 2) then
@@ -6,13 +6,13 @@ if(count == 2) then
 return 0;
 }
 count = count - 1;
-return swap(count = count;);
+return swap(count = count; arg2=erer;);
 }
 
 define start()
 {
 int a = 0;
-a = swap(count = 3;);
+a = swap(count = 3; arg2=erer;);
 }
 
 start();

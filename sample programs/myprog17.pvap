@@ -1,0 +1,2 @@
+Array arr = int[10];
+arr[10] = 22;

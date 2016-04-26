@@ -33,7 +33,7 @@ program:
 declarations:
 sd=SIMPLEDATATYPE i=IDENT (op='=' expression )? ENDOFSTATEMENT
 |
-cd=compoundDataType identifier '=' SIMPLEDATATYPE'[' digit ']' ENDOFSTATEMENT
+cdT=COMPOUNDDATATYPE cdi=IDENT '=' cdtsd=SIMPLEDATATYPE'[' d=DIGIT ']' ENDOFSTATEMENT
 ;
 
 functions:
@@ -48,7 +48,7 @@ declarations*
 sequenceofstatements
 ;
 
-parameters: datatypes IDENT (',' datatypes IDENT)*;
+parameters: dtl=datatypes dtli=IDENT (',' dtr=datatypes dtri=IDENT)*;
 sequenceofstatements: (statement)*;
 statement: (simplestatement | compoundstatement);
 simplestatement : returnstatement | assignmentstatement;
@@ -56,8 +56,12 @@ simplestatement : returnstatement | assignmentstatement;
 returnstatement: 'return' (e=expression | f=functionCall)? ENDOFSTATEMENT;
 loopbreakstatement: 'terminate' ENDOFSTATEMENT;
 assignmentstatement:
-	lhs=identifier op='=' rhs=expression ENDOFSTATEMENT
+	(lhs=identifier | lhsarray=arrayType) op='=' rhs=expression ENDOFSTATEMENT
 	| (lhs=identifier '=')? f=functionCall ENDOFSTATEMENT
+;
+
+arrayType:
+	i=IDENT '[' d=DIGIT ']'
 ;
 
 functionCall:
@@ -71,6 +75,7 @@ actualParameters:
 term: i=IDENT 
 	| '(' expression ')'
 	| d=DIGIT
+	| arrayName=IDENT '[' index=DIGIT ']'
 ;
 
 negation:
@@ -141,9 +146,9 @@ loopStatement:
 	'}'
 ;
 
-datatypes: (SIMPLEDATATYPE | compoundDataType);
+datatypes: (SIMPLEDATATYPE | COMPOUNDDATATYPE);
 SIMPLEDATATYPE: ('int' | 'bool');
-compoundDataType: ('Array' | 'Stack');
+COMPOUNDDATATYPE: ('Array' | 'Stack');
 identifier: IDENT;
 ENDOFSTATEMENT: ';' ;
 IDENT: ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '0'..'9')*;

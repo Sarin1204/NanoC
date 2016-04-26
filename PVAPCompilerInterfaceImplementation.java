@@ -6,10 +6,10 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import antlr.pvapCompilerParser.ActualParametersContext;
+import antlr.pvapCompilerParser.ArrayTypeContext;
 import antlr.pvapCompilerParser.AssignmentstatementContext;
 import antlr.pvapCompilerParser.BinaryAdditionContext;
 import antlr.pvapCompilerParser.BinaryMultiplicationContext;
-import antlr.pvapCompilerParser.CompoundDataTypeContext;
 import antlr.pvapCompilerParser.CompoundstatementContext;
 import antlr.pvapCompilerParser.DatatypesContext;
 import antlr.pvapCompilerParser.DeclarationsContext;
@@ -38,6 +38,7 @@ import antlr.pvapCompilerParser.UnaryContext;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener{
 
@@ -47,6 +48,11 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	int savePreviousLineNumber = -1;
 	boolean rewind = true;
 	boolean loopShouldTerminate = false;
+	
+	int typeOfParam = 0;
+	int returnType = 1;
+	int argsList = 2;
+	HashMap<String, ArrayList<Object>> hmap = new HashMap<String, ArrayList<Object>>();
 	
 	@Override
 	public void enterEveryRule(ParserRuleContext arg0) {
@@ -229,6 +235,20 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			lineNumber = lineNumber + 1;
 			sb.add("STORE" + " " + ctx.lhs.getText());
 		}
+		else if (ctx.lhsarray != null)
+		{
+			lineNumber = lineNumber + 1;
+			sb.add("STORE" + " " + ctx.lhsarray.i.getText() + "@" + ctx.lhsarray.d.getText());
+		}
+		else
+		{
+			//function call
+			if(hmap.containsKey(ctx.f.i.getText()) == false)
+			{
+				System.out.println("Function '" + ctx.f.i.getText() + "' does not exist");
+				System.exit(1);
+			}
+		}
 		//System.out.println("exitAssignmentstatement");
 	}
 
@@ -255,7 +275,6 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		}
 		
 		return fbc;
-		
 	}
 	
 	@Override
@@ -379,15 +398,35 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	@Override
 	public void enterDeclarations(DeclarationsContext ctx) {
 		// TODO Auto-generated method stub
-		if((ctx.sd != null) && (ctx.sd.getText().equalsIgnoreCase("int")))
+		if(ctx.sd != null)
 		{
-			lineNumber = lineNumber + 1;
-			sb.add("DECLI " + ctx.i.getText());
+			if ((ctx.sd != null) && (ctx.sd.getText().equalsIgnoreCase("int")))
+			{
+				lineNumber = lineNumber + 1;
+				sb.add("DECLI " + ctx.i.getText());
+			}
+			else if((ctx.sd != null) && (ctx.sd.getText().equalsIgnoreCase("bool")))
+			{
+				lineNumber = lineNumber + 1;
+				sb.add("DECLB " + ctx.i.getText());
+			}
 		}
-		else if((ctx.sd != null) && (ctx.sd.getText().equalsIgnoreCase("bool")))
+		else if (ctx.cdT != null)
 		{
-			lineNumber = lineNumber + 1;
-			sb.add("DECLB " + ctx.i.getText());
+			System.out.println(" ------------------- HERE ------------------- ");
+			if((ctx.cdT.getText().equalsIgnoreCase("array")))
+			{
+				if(ctx.cdtsd.getText().contentEquals("int"))
+				{
+					lineNumber = lineNumber + 1;
+					sb.add("DECLI " + ctx.cdi.getText() + " " + ctx.d.getText());
+				}
+				else if(ctx.cdtsd.getText().contentEquals("bool"))
+				{
+					lineNumber = lineNumber + 1;
+					sb.add("DECLB " + ctx.cdi.getText() + " " + ctx.d.getText());
+				}
+			}
 		}
 
 		
@@ -409,6 +448,44 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	public void enterActualParameters(ActualParametersContext ctx) {
 		// TODO Auto-generated method stub
 		//System.out.println("enterActualParameters");
+		if(ctx != null)
+		{
+			int argCount = 0;
+			FunctionCallContext fcc = (FunctionCallContext) ctx.parent;
+			//for (int i = 1, j =0; i <= apc.getChildCount();i = i + 2, j += 1)
+			ArrayList<Object> funcDetails = hmap.get(fcc.i.getText());
+			@SuppressWarnings("unchecked")
+			HashMap<String, String> args = (HashMap<String, String>) funcDetails.get(argsList);
+			
+			for (int j =0; j < ctx.getChildCount();j += 1)
+			{
+				argCount = argCount + 1;
+				if(args.containsKey(ctx.assignmentstatement(j).lhs.getText()))
+				{
+					lineNumber = lineNumber + 1;
+					String argType = args.get(ctx.assignmentstatement(j).lhs.getText());
+					if(argType.contentEquals("int"))
+					{
+						sb.add("DECLI " + ctx.assignmentstatement(j).lhs.getText());
+					}
+					else if(argType.contentEquals("bool"))
+					{
+						sb.add("DECLB " + ctx.assignmentstatement(j).lhs.getText());
+					}
+				}
+				else
+				{
+					System.out.println("Error! no such argument for the function '" + fcc.i.getText() + "' : " + ctx.assignmentstatement(j).lhs.getText());
+					System.exit(1);
+				}
+			}
+			
+			if (argCount != args.size())
+			{
+				System.out.println("Invalid number of arguments to the function '" + fcc.i.getText() + "'");
+				System.exit(1);
+			}
+		}
 	}
 
 	@Override
@@ -454,19 +531,48 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		//System.out.println("enterFunctions");
 		lineNumber = lineNumber + 1;
 		sb.add("FUNCSTART " + ctx.i.getText());
-		/*if(ctx.d != null)
+
+		HashMap<String, String> args = new HashMap<String, String>();
+		
+		if(ctx.d != null)
 		{
-			if(ctx.d.getText().contentEquals("int"))
+			if(ctx.p != null)
 			{
-				lineNumber = lineNumber + 1;
-				sb.add("DECLI " + "theReturnVariable");
+				for (int j =0; j < ctx.p.getChildCount();)
+				{
+					if(ctx.p.getChild(j).getText().contentEquals(","))
+						j = j + 1;
+	
+					else
+					{
+						String dataType = ctx.p.getChild(j).getText();
+						String variableName = ctx.p.getChild((j+1)).getText();
+						
+						if(dataType.contentEquals("int"))
+						{
+							//sb.add("DECLI " + variableName);
+							args.put(variableName, dataType);
+						}
+						else if(dataType.contentEquals("bool"))
+						{
+							args.put(variableName, dataType);
+						}
+						j = j + 2;
+					}
+				}
 			}
-			else if(ctx.d.getText().contentEquals("bool"))
-			{
-				lineNumber = lineNumber + 1;
-				sb.add("DECLB " + "theReturnVariable");
-			}
-		}*/
+			
+			ArrayList<Object> v = new ArrayList<Object>(3);
+			v.add(typeOfParam, "function");
+			v.add(returnType, ctx.d.getText());
+			v.add(argsList, args);
+			
+			hmap.put(ctx.i.getText(), v);
+		}
+		else
+		{
+			hmap.put(ctx.i.getText(), null);
+		}
 	}
 
 	@Override
@@ -630,6 +736,11 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			lineNumber = lineNumber + 1;
 			sb.add("PUSH " + ctx.i.getText());
 		}
+		else if(ctx.arrayName != null)
+		{
+			lineNumber = lineNumber + 1;
+			sb.add("PUSH " + ctx.arrayName.getText() + "@" + ctx.index.getText());
+		}
 	}
 
 	@Override
@@ -647,7 +758,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	private void writeIntermediateCodeToFile()
 	{
 		try{
-		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog16.pvi", "UTF-8");
+		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog17.pvi", "UTF-8");
 		for (int i = 0; i< sb.size(); i++)
 			writer.println(sb.get(i));
 
@@ -693,18 +804,6 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 				sb.add("SUB");
 			}
 		}
-	}
-
-	@Override
-	public void enterCompoundDataType(CompoundDataTypeContext ctx) {
-		// TODO Auto-generated method stub
-		//System.out.println("enterCompoundDataType");
-	}
-
-	@Override
-	public void exitCompoundDataType(CompoundDataTypeContext ctx) {
-		// TODO Auto-generated method stub
-		//System.out.println("exitCompoundDataType");
 	}
 
 	@Override
@@ -790,6 +889,18 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 
 	@Override
 	public void exitFunctionBody(FunctionBodyContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enterArrayType(ArrayTypeContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitArrayType(ArrayTypeContext ctx) {
 		// TODO Auto-generated method stub
 		
 	}
