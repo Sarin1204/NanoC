@@ -21,6 +21,7 @@ TESTTGOTO 21
 ENDSCOPE
 PUSH 2
 STORE var
+PRINTLN 'variable%is%' var var2 var3
 ENDSCOPE
 FUNCEND myfunc
 EOF

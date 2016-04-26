@@ -9,4 +9,5 @@ otherwise if(3 > 2) then
 {
 }
 var = 2;
+print "variable is ", var, var2, var3
 }

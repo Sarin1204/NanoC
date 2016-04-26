@@ -28,6 +28,7 @@ import antlr.pvapCompilerParser.LoopbreakstatementContext;
 //import antlr.pvapCompilerParser.MainFunctionContext;
 import antlr.pvapCompilerParser.NegationContext;
 import antlr.pvapCompilerParser.ParametersContext;
+import antlr.pvapCompilerParser.PrintStatementContext;
 import antlr.pvapCompilerParser.ProgramContext;
 import antlr.pvapCompilerParser.RelationContext;
 import antlr.pvapCompilerParser.ReturnstatementContext;
@@ -1014,5 +1015,28 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		sb.add("PUSH " + "1");
 		lineNumber = lineNumber + 1;
 		sb.add("TESTTGOTO ENDIF");
+	}
+
+	@Override
+	public void enterPrintStatement(PrintStatementContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitPrintStatement(PrintStatementContext ctx) {
+		// TODO Auto-generated method stub
+		String PrintStatement = new String();
+		PrintStatement = "PRINTLN '" + ctx.str.getText().replace(" ", "%").replace("\"", "") + "'";
+		
+		for (int i = 3; i < ctx.getChildCount();i++)
+		{
+			if(ctx.getChild(i).getText().contentEquals(","))
+				continue;
+			PrintStatement = PrintStatement + " " + ctx.getChild(i).getText();
+		}
+		
+		lineNumber = lineNumber + 1;
+		sb.add(PrintStatement);
 	}
 }

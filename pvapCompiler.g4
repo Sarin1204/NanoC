@@ -14,21 +14,8 @@ tokens
 	PARAMS
 }
 program:
-(declarations | assignmentstatement | stackStatement | functions)*
-//mainFunction?
+(declarations | assignmentstatement | stackStatement | printStatement | functions)*
 ;
-
-//mainFunction:
-//'define' i='start' '(' (p=parameters)?')' ('returns' d=datatypes)?
-//'{'
-//mainFunctionBody
-//'}'
-//;
-
-//mainFunctionBody:
-//declarations*
-//(assignmentstatement | sequenceofstatements)
-//;
 
 declarations:
 sd=SIMPLEDATATYPE i=IDENT (op='=' expression )? ENDOFSTATEMENT
@@ -51,7 +38,7 @@ sequenceofstatements
 parameters: dtl=datatypes dtli=IDENT (',' dtr=datatypes dtri=IDENT)*;
 sequenceofstatements: (statement)*;
 statement: (simplestatement | compoundstatement);
-simplestatement : returnstatement | assignmentstatement | stackStatement;
+simplestatement : returnstatement | assignmentstatement | stackStatement | printStatement;
 
 returnstatement: 'return' (e=expression | f=functionCall)? ENDOFSTATEMENT;
 loopbreakstatement: 'terminate' ENDOFSTATEMENT;
@@ -65,6 +52,14 @@ stackStatement:
 
 arrayType:
 	i=IDENT '[' d=DIGIT ']'
+;
+
+printStatement:
+	'print' str=STRING_LITERAL (',' i=IDENT)*
+;
+
+STRING_LITERAL:
+	'"' (~'\'' | '\\' (.))* '"'
 ;
 
 functionCall:
