@@ -114,24 +114,24 @@ compoundstatement:
  	| loopStatement
  ;
 
-
+ifStatementBody:
+		(declarations)*
+		sequenceofstatements
+;
 
 ifStatement:
 	'if' expression 'then'
 	'{'
-		(declarations)*
-		sequenceofstatements
+		ifStatementBody
 	'}'
 	('otherwise if' expression 'then'
 	'{'
-		(declarations)*
-		sequenceofstatements
+		ifStatementBody
 	'}'
 	)*
 	('otherwise'
 	'{'
-		(declarations)*
-		sequenceofstatements
+		ifStatementBody
 	'}'
 	)?
 ;

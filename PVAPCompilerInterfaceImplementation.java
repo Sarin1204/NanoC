@@ -19,6 +19,7 @@ import antlr.pvapCompilerParser.FunctionBodyContext;
 import antlr.pvapCompilerParser.FunctionCallContext;
 import antlr.pvapCompilerParser.FunctionsContext;
 import antlr.pvapCompilerParser.IdentifierContext;
+import antlr.pvapCompilerParser.IfStatementBodyContext;
 import antlr.pvapCompilerParser.IfStatementContext;
 import antlr.pvapCompilerParser.LoopEnterStatementContext;
 import antlr.pvapCompilerParser.LoopStatementContext;
@@ -96,8 +97,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			{
 				for(int i = sb.size()-1; i >= 0; i--)
 				{
-					//if(sb.get(i).contentEquals("TESTFGOTO ENDSCOPE"))
-					if(sb.get(i).contentEquals("TESTFGOTO ENDSCOPE"))
+					if(sb.get(i).contentEquals("TESTFGOTO ENDSCOPEIF"))
 					{
 						sb.set(i, "TESTFGOTO " + (lineNumber + 1));
 						break;
@@ -109,7 +109,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		if(arg0.getText().contentEquals("then"))
 		{
 			lineNumber = lineNumber + 1;
-			sb.add("TESTFGOTO ENDSCOPE");
+			sb.add("TESTFGOTO ENDSCOPEIF");
 		}
 	}
 
@@ -321,24 +321,6 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 				if(sosc != null)
 				{
 					fbc = getFunctionBodyContext(sosc);
-
-					/*try
-					{
-						//check if we are returning from a function
-						fbc = (FunctionBodyContext) sosc.parent;
-					}
-					catch(ClassCastException e)
-					{
-						// the return was inside another block.
-						try
-						{
-							fbc = (FunctionBodyContext) sosc.parent.parent;
-						}
-						catch(Exception excp)
-						{
-							fbc = null;
-						}
-					}*/
 					
 					if(fbc != null)
 					{
@@ -750,6 +732,17 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		// TODO Auto-generated method stub
 		//System.out.println("exitIfStatement");
 		//sb.add("TESTFGOTO ENDSCOPE");
+		
+		int i = sb.size()-1;
+		
+		while (i >= 0)
+		{
+			if(sb.get(i).contentEquals("TESTTGOTO ENDIF"))
+			{
+				sb.set(i, "TESTTGOTO " + (sb.size()));
+			}
+			i = i - 1;
+		}
 	}
 
 	@Override
@@ -820,7 +813,7 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	private void writeIntermediateCodeToFile()
 	{
 		try{
-		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog17.pvi", "UTF-8");
+		PrintWriter writer = new PrintWriter("/media/prabhanjan/25DDE38A4C3E00E5/ASU Classes Docs/compilers/gitproject/Compiler/intermediate code/myprog7.pvi", "UTF-8");
 		for (int i = 0; i< sb.size(); i++)
 			writer.println(sb.get(i));
 
@@ -1006,5 +999,20 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			System.out.println("Variable does not exist : " + ctx.i.getText());
 			System.exit(1);
 		}
+	}
+
+	@Override
+	public void enterIfStatementBody(IfStatementBodyContext ctx) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void exitIfStatementBody(IfStatementBodyContext ctx) {
+		// TODO Auto-generated method stub
+		lineNumber = lineNumber + 1;
+		sb.add("PUSH " + "1");
+		lineNumber = lineNumber + 1;
+		sb.add("TESTTGOTO ENDIF");
 	}
 }
