@@ -11,7 +11,8 @@ class Instruction:
         self.command = line_values[0]
         i=1
         while i < len(line_values):
-            self.arg.append(line_values[i])
+            if line_values[i] != '':
+                self.arg.append(line_values[i])
             i+=1
             
         

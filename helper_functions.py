@@ -8,7 +8,9 @@ def isInt(s):
         return False
     
 def isBool(s):
-    if s == 'True' or s== True or s == 'False' or s == False:
+    if s == 0 or s == 1:
+        return False
+    elif s == 'True' or s== True or s == 'False' or s == False:
         return True
     else:
         return False

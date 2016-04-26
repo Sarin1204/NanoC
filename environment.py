@@ -17,13 +17,10 @@ class Environment:
         except Exception,e:
             traceback.print_exc()
     
-    def store_variable(self,key):
+    def store_variable(self,key,stack_value):
         try:
             #pdb.set_trace()
             datatype_obj = self.symbol_table[key]
-            if len(self.stack) == 0:
-                pdb.set_trace()
-            stack_value = self.stack.pop()
             if (isinstance(stack_value,bool) and datatype_obj.type == 'bool') or (isinstance(stack_value,int) and datatype_obj.type == 'int'):
                 datatype_obj.value = stack_value
             else:
@@ -48,12 +45,18 @@ class Environment:
             return self.stack.pop()
         except Exception,e:
             traceback.print_exc()
+            
+    def symbol_exists(self,key):
+        try:
+            if key not in self.symbol_table:
+                return False
+            else:
+                return True
+        except Exception,e:
+            traceback.print_exc()
         
     def retrieve_symbol(self,key):
         try:
-            if key not in self.symbol_table:
-                return 'Key not found'
-            else:
                 return self.symbol_table[key].value
         except Exception,e:
             traceback.print_exc()

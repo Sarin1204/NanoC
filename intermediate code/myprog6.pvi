@@ -10,7 +10,9 @@ PUSH 1
 PUSH 3
 ADD
 STORE var
+PRINTLN 'var%==%' var
 ENDSCOPE
 ENDSCOPE
 FUNCEND myfunc
+CALL myfunc
 EOF

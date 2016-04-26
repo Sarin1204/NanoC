@@ -11,11 +11,11 @@ import fileinput
 
 
 
-def interpret_command(line,curr_scope,bytecode_file_pointer,curr_line_number):
+def interpret_command(line,curr_scope,curr_line_number):
     instr = Instruction(line)
     bytecode = Bytecode()
     try:
-        getattr(bytecode, instr.command)(curr_scope,instr,bytecode_file_pointer,curr_line_number)
+        getattr(bytecode, instr.command)(curr_scope,instr,curr_line_number)
     except Exception,e:
         print 'Error in executing bytecode instruction'
         traceback.print_exc()
@@ -24,30 +24,35 @@ def interpret_command(line,curr_scope,bytecode_file_pointer,curr_line_number):
         
 
 curr_line_number = [0]
-def read_file(bytecode_file_pointer,scope):
+def read_file(prog_list,scope):
+    #pdb.set_trace()
     #print 'curr scope is '+str(scope)
-    global curr_line_number
-    for line in bytecode_file_pointer:
+    while curr_line_number[0] < len(prog_list)-1:
         #pdb.set_trace()
-        curr_line_number[0] += 1
+        curr_line_number[0]+=1
+        line = prog_list[curr_line_number[0]]
         line = line.replace("\n","")
-        if 'invoke' in line:
+        #if curr_line_number[0] == 3:
             #pdb.set_trace()
-            invoke_function_environment(scope,line,bytecode_file_pointer,curr_line_number)
+        if 'CALL' in line:
+            #pdb.set_trace()
+            invoke_function_environment(scope,line,curr_line_number)
             return True
-        elif 'funcend' in line or 'RET' in line:
-            return_function_environment(scope,line,bytecode_file_pointer,curr_line_number)
+        elif 'FUNCEND' in line or 'RET' in line:
+            #pdb.set_trace()
+            return_function_environment(scope,line,curr_line_number)
             return True
-        elif line == 'openscope':
+        elif line == 'OPENSCOPE':
             create_environment()
             return True
-        elif line == 'closescope':
-            destroy_environment()
+        elif line == 'ENDSCOPE':
+            #pdb.set_trace()
+            destroy_environment(curr_line_number)
             return True
-        elif line == '':
+        elif line == '' or line == 'EOF':
             pass
         else:
-            interpret_command(line,scope,bytecode_file_pointer,curr_line_number)
+            interpret_command(line,scope,curr_line_number)
     return False
             
 if __name__ == "__main__":
@@ -60,10 +65,9 @@ if __name__ == "__main__":
     global_env = Environment(True,None)
     environment_stack.append(global_env)
     file_not_empty,curr_scope = True,global_env
-    with open(input_file) as bytecode_file_pointer:
-        create_offsets(bytecode_file_pointer)
-    with open(input_file) as bytecode_file_pointer:
-        while file_not_empty:
-            file_not_empty = read_file(bytecode_file_pointer,environment_stack[len(environment_stack)-1])
+    with open(input_file,'r+') as bytecode_file_pointer:
+        read_program(bytecode_file_pointer)
+    while file_not_empty:
+        file_not_empty = read_file(prog_list,environment_stack[len(environment_stack)-1])
             #pdb.set_trace()
             

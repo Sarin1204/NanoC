@@ -1,33 +1,42 @@
-declI ans
-funcstart power
-declI base
-declI exp
-declI value
-push 1
-store value
-push exp
-push 0
-gtr
-testfgoto 21
-openscope
-push value
-push base
-mul value
-push exp
-push 1
-sub exp
-closescope
-push True
-testtgoto 7
-RET value
-println 'Enter' 'base'
-read
-declI base
-store base
-println 'Enter' 'exponent'
-read
-declI exp
-store exp
-invoke power base exp
-store ans
-println 'The' 'answer' 'is' ans
+DECLI ans
+FUNCSTART power
+OPENSCOPE
+DECLI base
+DECLI exp
+DECLI value
+PUSH 1
+STORE value
+PUSH exp
+PUSH 0
+GTR
+TESTFGOTO 25
+OPENSCOPE
+PUSH value
+PUSH base
+MUL
+STORE value
+PUSH exp
+PUSH 1
+SUB
+STORE exp
+ENDSCOPE
+PUSH True
+TESTTGOTO 9
+PUSH value
+DECLI theReturnVariable
+STORE theReturnVariable
+RET theReturnVariable
+ENDSCOPE
+FUNCEND power
+PRINTLN 'Enter%base'
+READ
+DECLI base
+STORE base
+PRINTLN 'Enter%exponent'
+READ
+DECLI exp
+STORE exp
+CALL power base exp
+STORE ans
+PRINTLN 'The%answer%is' ans
+EOF

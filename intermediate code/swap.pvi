@@ -1,7 +1,7 @@
 FUNCSTART swap
 OPENSCOPE
 DECLI arg1
-DECLB arg2
+DECLI arg2
 DECLI temp
 PUSH 0
 STORE temp
@@ -11,6 +11,10 @@ PUSH arg2
 STORE arg1
 PUSH temp
 STORE arg2
+PUSH arg2
+DECLI theReturnVariable
+STORE theReturnVariable
+RET theReturnVariable
 ENDSCOPE
 FUNCEND swap
 FUNCSTART start
@@ -18,12 +22,16 @@ OPENSCOPE
 DECLI a
 PUSH 0
 STORE a
+DECLI arg1
 PUSH 1
 STORE arg1
+DECLI arg2
 PUSH 2
 STORE arg2
 CALL swap arg1 arg2 
 STORE a
+PRINTLN 'arg2%==%' a
 ENDSCOPE
 FUNCEND start
+CALL start
 EOF
