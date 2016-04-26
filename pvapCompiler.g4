@@ -14,7 +14,7 @@ tokens
 	PARAMS
 }
 program:
-(declarations | assignmentstatement | functions)*
+(declarations | assignmentstatement | stackStatement | functions)*
 //mainFunction?
 ;
 
@@ -51,13 +51,16 @@ sequenceofstatements
 parameters: dtl=datatypes dtli=IDENT (',' dtr=datatypes dtri=IDENT)*;
 sequenceofstatements: (statement)*;
 statement: (simplestatement | compoundstatement);
-simplestatement : returnstatement | assignmentstatement;
+simplestatement : returnstatement | assignmentstatement | stackStatement;
 
 returnstatement: 'return' (e=expression | f=functionCall)? ENDOFSTATEMENT;
 loopbreakstatement: 'terminate' ENDOFSTATEMENT;
 assignmentstatement:
 	(lhs=identifier | lhsarray=arrayType) op='=' rhs=expression ENDOFSTATEMENT
 	| (lhs=identifier '=')? f=functionCall ENDOFSTATEMENT
+;
+stackStatement:
+	sop=STACKOPERATIONS i=IDENT ',' expression ENDOFSTATEMENT
 ;
 
 arrayType:
@@ -149,6 +152,7 @@ loopStatement:
 datatypes: (SIMPLEDATATYPE | COMPOUNDDATATYPE);
 SIMPLEDATATYPE: ('int' | 'bool');
 COMPOUNDDATATYPE: ('Array' | 'Stack');
+STACKOPERATIONS: ('push' | 'pop');
 identifier: IDENT;
 ENDOFSTATEMENT: ';' ;
 IDENT: ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '0'..'9')*;

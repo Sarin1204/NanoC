@@ -32,6 +32,7 @@ import antlr.pvapCompilerParser.RelationContext;
 import antlr.pvapCompilerParser.ReturnstatementContext;
 import antlr.pvapCompilerParser.SequenceofstatementsContext;
 import antlr.pvapCompilerParser.SimplestatementContext;
+import antlr.pvapCompilerParser.StackStatementContext;
 import antlr.pvapCompilerParser.StatementContext;
 import antlr.pvapCompilerParser.TermContext;
 import antlr.pvapCompilerParser.UnaryContext;
@@ -232,11 +233,35 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 	public void exitAssignmentstatement(AssignmentstatementContext ctx) {
 		// TODO Auto-generated method stub
 		if(ctx.lhs != null){
-			lineNumber = lineNumber + 1;
-			sb.add("STORE" + " " + ctx.lhs.getText());
+			if(hmap.containsKey(ctx.lhs.getText()))
+			{
+				lineNumber = lineNumber + 1;
+				sb.add("STORE" + " " + ctx.lhs.getText());
+			}
+			else
+			{
+				System.out.println("Variable " + ctx.lhs.getText() + " does not exist");
+			}
 		}
 		else if (ctx.lhsarray != null)
 		{
+			
+			if(hmap.containsKey(ctx.lhsarray.i.getText()))
+			{
+				ArrayList<Object> var = hmap.get(ctx.lhsarray.i.getText());
+				String type = (String) var.get(0);
+				if(type.equalsIgnoreCase("stack"))
+				{
+					System.out.println("Random access on a variable of type Stack is not allowed");
+					System.exit(1);
+				}
+			}
+			else
+			{
+				System.out.println("Variable does not exist : " + ctx.lhsarray.i.getText());
+				System.exit(1);
+			}
+			
 			lineNumber = lineNumber + 1;
 			sb.add("STORE" + " " + ctx.lhsarray.i.getText() + "@" + ctx.lhsarray.d.getText());
 		}
@@ -404,17 +429,24 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 			{
 				lineNumber = lineNumber + 1;
 				sb.add("DECLI " + ctx.i.getText());
+				
+				ArrayList<Object> v = new ArrayList<Object>(1);
+				v.add(typeOfParam, "int");
+				hmap.put(ctx.i.getText(), v);
 			}
 			else if((ctx.sd != null) && (ctx.sd.getText().equalsIgnoreCase("bool")))
 			{
 				lineNumber = lineNumber + 1;
 				sb.add("DECLB " + ctx.i.getText());
-			}
+
+				ArrayList<Object> v = new ArrayList<Object>(1);
+				v.add(typeOfParam, "bool");		
+				hmap.put(ctx.i.getText(), v);
+				}
 		}
 		else if (ctx.cdT != null)
 		{
-			System.out.println(" ------------------- HERE ------------------- ");
-			if((ctx.cdT.getText().equalsIgnoreCase("array")))
+			if((ctx.cdT.getText().equalsIgnoreCase("array")) || (ctx.cdT.getText().equalsIgnoreCase("stack")))
 			{
 				if(ctx.cdtsd.getText().contentEquals("int"))
 				{
@@ -426,6 +458,20 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 					lineNumber = lineNumber + 1;
 					sb.add("DECLB " + ctx.cdi.getText() + " " + ctx.d.getText());
 				}
+				
+				if(ctx.cdT.getText().equalsIgnoreCase("array"))
+				{
+					ArrayList<Object> v = new ArrayList<Object>(1);
+					v.add(typeOfParam, "Array");		
+					hmap.put(ctx.cdi.getText(), v);
+				}
+				else if(ctx.cdT.getText().equalsIgnoreCase("stack"))
+				{
+					ArrayList<Object> v = new ArrayList<Object>(1);
+					v.add(typeOfParam, "Stack");
+					hmap.put(ctx.cdi.getText(), v);					
+				}
+
 			}
 		}
 
@@ -467,10 +513,18 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 					if(argType.contentEquals("int"))
 					{
 						sb.add("DECLI " + ctx.assignmentstatement(j).lhs.getText());
+						
+						ArrayList<Object> v = new ArrayList<Object>(1);
+						v.add(typeOfParam, "int");
+						hmap.put(ctx.assignmentstatement(j).lhs.getText(), v);
 					}
 					else if(argType.contentEquals("bool"))
 					{
 						sb.add("DECLB " + ctx.assignmentstatement(j).lhs.getText());
+						
+						ArrayList<Object> v = new ArrayList<Object>(1);
+						v.add(typeOfParam, "bool");
+						hmap.put(ctx.assignmentstatement(j).lhs.getText(), v);
 					}
 				}
 				else
@@ -733,8 +787,16 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		}
 		else if(ctx.i != null)
 		{
+			if(hmap.containsKey(ctx.i.getText()))
+			{
 			lineNumber = lineNumber + 1;
 			sb.add("PUSH " + ctx.i.getText());
+			}
+			else
+			{
+				System.out.println("Variable " + ctx.i.getText() + " does not exist");
+				System.exit(1);
+			}
 		}
 		else if(ctx.arrayName != null)
 		{
@@ -873,11 +935,19 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 					{
 						lineNumber = lineNumber + 1;
 						sb.add("DECLI " + variableName);
+						
+						ArrayList<Object> v = new ArrayList<Object>(1);
+						v.add(typeOfParam, "int");
+						hmap.put(variableName, v);
 					}
 					else if(dataType.contentEquals("bool"))
 					{
 						lineNumber = lineNumber + 1;
 						sb.add("DECLB " + variableName);
+						
+						ArrayList<Object> v = new ArrayList<Object>(1);
+						v.add(typeOfParam, "bool");
+						hmap.put(variableName, v);
 					}
 					j = j + 2;
 				}
@@ -905,62 +975,36 @@ public class PVAPCompilerInterfaceImplementation implements pvapCompilerListener
 		
 	}
 
-	/*@Override
-	public void enterMainFunction(MainFunctionContext ctx) {
+	@Override
+	public void enterStackStatement(StackStatementContext ctx) {
 		// TODO Auto-generated method stub
-		lineNumber = lineNumber + 1;
-		sb.add("FUNCSTART " + ctx.i.getText());
+		
 	}
 
 	@Override
-	public void exitMainFunction(MainFunctionContext ctx) {
+	public void exitStackStatement(StackStatementContext ctx) {
 		// TODO Auto-generated method stub
-		lineNumber = lineNumber + 1;
-		sb.add("FUNCEND " + ctx.i.getText());
-	}
-
-	@Override
-	public void enterMainFunctionBody(MainFunctionBodyContext ctx) {
-		// TODO Auto-generated method stub
-		MainFunctionContext fc = null;
+		//System.out.println("Exiting Stack Statement");
 		
-		if(ctx.parent != null)
+		if(hmap.containsKey(ctx.i.getText()))
 		{
-			fc = (MainFunctionContext) ctx.parent;
-		}
-		
-		if(fc.p != null)
-		{
-			ParametersContext pc = fc.p;
-			for (int j =0; j < pc.getChildCount();)
+			ArrayList<Object> var = hmap.get(ctx.i.getText());
+			String type = (String) var.get(0);
+			if(type.equalsIgnoreCase("stack"))
 			{
-				if(pc.getChild(j).getText().contentEquals(","))
-					j = j + 1;
-
-				else
-				{
-					String dataType = pc.getChild(j).getText();
-					String variableName = pc.getChild((j+1)).getText();
-					
-					if(dataType.contentEquals("int"))
-					{
-						lineNumber = lineNumber + 1;
-						sb.add("DECLI " + variableName);
-					}
-					else if(dataType.contentEquals("bool"))
-					{
-						lineNumber = lineNumber + 1;
-						sb.add("DECLB " + variableName);
-					}
-					j = j + 2;
-				}
+				lineNumber = lineNumber + 1;
+				sb.add("STORE " + ctx.i.getText() + "@LAST");
+			}
+			else
+			{
+				System.out.println("Invalid type for " + ctx.i.getText());
+				System.exit(1);
 			}
 		}
+		else
+		{
+			System.out.println("Variable does not exist : " + ctx.i.getText());
+			System.exit(1);
+		}
 	}
-
-	@Override
-	public void exitMainFunctionBody(MainFunctionBodyContext ctx) {
-		// TODO Auto-generated method stub
-		
-	}*/
 }
