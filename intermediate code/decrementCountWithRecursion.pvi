@@ -22,7 +22,7 @@ DECLI count
 DECLI arg2
 PUSH count
 STORE count
-PUSH 22
+PUSH 2
 STORE arg2
 CALL swap count arg2 
 DECLI theReturnVariable
@@ -37,12 +37,13 @@ PUSH 0
 STORE a
 DECLI count
 DECLI arg2
-PUSH 0
+PUSH 3
 STORE count
 PUSH 1
 STORE arg2
 CALL swap count arg2 
 STORE a
+PRINTLN 'a%==%' a
 ENDSCOPE
 FUNCEND start
 CALL start 

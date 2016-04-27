@@ -32,11 +32,16 @@ def return_function_environment(scope,line,curr_line_number):
     instr = Instruction(line)
     func_scope,parent_scope = retrieve_parent_and_function_scope()
     if instr.command == 'RET':
-        if isInt(instr.arg[0]):
-            parent_scope.push_stack(instr.arg[0])
+        if '@' in instr.arg[0]:
+            symbol = instr.arg[0].split('@')[0]
+            index = instr.arg[0].split('@')[1]
         else:
-            parent_scope.push_stack(scope.retrieve_symbol(instr.arg[0]))
-    
+            symbol = instr.arg[0]
+            index = None
+        if isInt(instr.arg[0]):
+            parent_scope.push_stack(symbol)
+        else:
+            parent_scope.push_stack(scope.retrieve_symbol(symbol,index))
     curr_line_number[0] = func_scope.func_return_line
     latest_scope = environment_stack[len(environment_stack)-1]
     while latest_scope != parent_scope:
@@ -54,20 +59,26 @@ def initialize_function_arguments(calling_environment,func_environment,func_inst
         line = prog_list[curr_line_number[0]]
         line = line.replace("\n","")
         instr = Instruction(line)
+        if '@' in param:
+            symbol = param.split('@')[0]
+            index = param.split('@')[1]
+        else:
+            symbol = param
+            index = None
         match_int = re.match('^-?[0-9]+$',param)
-        if ((param == 'True' or param == 'False') and instr.command == 'DECLB') or (match_int and instr.command == 'DECLI'):
+        if ((symbol == 'True' or symbol == 'False') and instr.command == 'DECLB') or (match_int and instr.command == 'DECLI'):
             if instr.command == 'DECLB':
-                func_environment.declare_variable(instr.arg[0],'bool')
-                func_environment.store_variable(instr.arg[0],bool(param))
+                func_environment.declare_variable(instr.arg[0],'bool',index)
+                func_environment.store_variable(instr.arg[0],bool(symbol),index)
             elif instr.command == 'DECLI':
-                func_environment.declare_variable(instr.arg[0],'int')
-                func_environment.store_variable(instr.arg[0],int(param))
-        elif (calling_environment.retrieve_symbol_type(param) == 'bool' and instr.command == 'DECLB') or (calling_environment.retrieve_symbol_type(param) == 'int' and instr.command == 'DECLI'):           
+                func_environment.declare_variable(instr.arg[0],'int',index)
+                func_environment.store_variable(instr.arg[0],int(symbol),index)
+        elif (calling_environment.retrieve_symbol_type(symbol) == 'bool' and instr.command == 'DECLB') or (calling_environment.retrieve_symbol_type(symbol) == 'int' and instr.command == 'DECLI'):           
             if instr.command == 'DECLB':
-                func_environment.declare_variable(instr.arg[0],'bool')
+                func_environment.declare_variable(instr.arg[0],'bool',index)
             elif instr.command == 'DECLI':
-                func_environment.declare_variable(instr.arg[0],'int')
-            func_environment.store_variable(instr.arg[0],calling_environment.retrieve_symbol(param))
+                func_environment.declare_variable(instr.arg[0],'int',index)
+            func_environment.store_variable(instr.arg[0],calling_environment.retrieve_symbol(symbol,index),index)
         else:
             raise FunctionParamException({
                         'symbol' : func_instr.arg[0]

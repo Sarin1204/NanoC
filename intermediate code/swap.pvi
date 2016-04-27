@@ -1,7 +1,7 @@
 FUNCSTART swap
 OPENSCOPE
 DECLI arg1
-DECLB arg2
+DECLI arg2
 DECLI temp
 PUSH 0
 STORE temp
@@ -11,10 +11,11 @@ PUSH arg2
 STORE arg1
 PUSH temp
 STORE arg2
+PRINTLN 'arg2%==%' arg2
 ENDSCOPE
 FUNCEND swap
 DECLI arg1
-DECLB arg2
+DECLI arg2
 PUSH 1
 STORE arg1
 PUSH 2

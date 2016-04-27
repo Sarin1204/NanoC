@@ -24,3 +24,8 @@ class OperandTypeException(Exception):
     def __init___(self,dErrorArguments):
         Exception.__init__(self,"OperandTypeException occured with operator {0}".format(dErrArguments))
         self.dErrorArguments = dErrorArguements
+        
+class ArrayIndexException(Exception):
+    def __init___(self,dErrorArguments):
+        Exception.__init__(self,"ArrayIndexException occured with operator {0}".format(dErrArguments))
+        self.dErrorArguments = dErrorArguements
