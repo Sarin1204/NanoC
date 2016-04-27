@@ -36,6 +36,7 @@ class Environment:
                 if index == 'LAST':
                     index = datatype_obj.top+1
                     is_stack = True
+                index = int(index)
                 if index >= length:
                     raise ArrayIndexException({
                         'symbol' : (key,index)
@@ -70,12 +71,12 @@ class Environment:
             traceback.print_exc()
             
     def delete_struct_stack(self,key,index):
-        pdb.set_trace()
+        #pdb.set_trace()
         datatype_obj = self.symbol_table[key]
         length = datatype_obj.return_array_length()
         #pdb.set_trace()
         index = datatype_obj.top
-        value = datatype_obj.value[index]
+        value = datatype_obj.value[int(index)]
         datatype_obj.value[index] = None
         datatype_obj.top-=1
         self.push_stack(value)
@@ -98,6 +99,7 @@ class Environment:
                     length = datatype_obj.return_array_length()
                     if index == 'LAST':
                         index = datatype_obj.top
+                    index = int(index)
                     if index >= length:
                         raise ArrayIndexException({
                             'symbol' : (key,index)

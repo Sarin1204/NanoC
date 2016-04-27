@@ -4,4 +4,5 @@ STORE arr@0
 DECLI x
 PUSH arr@0
 STORE x
+PRINTLN 'x==%' x
 EOF

@@ -26,6 +26,7 @@ class Bytecode:
             scope.declare_variable(instr.arg[0],'bool',None)
         
     def STORE(self,scope,instr,curr_line_number):
+        #pdb.set_trace()
         var_value = scope.pop_stack()
         if '@' in instr.arg[0]:
             symbol = instr.arg[0].split('@')[0]
