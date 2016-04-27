@@ -1,0 +1,4 @@
+Array arr = int[10];
+arr[0] = 99;
+int x;
+x = arr[0];

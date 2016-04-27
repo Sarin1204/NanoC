@@ -1,0 +1,7 @@
+DECLI arr 10
+PUSH 99
+STORE arr@0
+DECLI x
+PUSH arr@0
+STORE x
+EOF
